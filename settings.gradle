@@ -1,0 +1,3 @@
+rootProject.name = 'spinnaker-bundle'
+
+includeBuild '../rosco/'
