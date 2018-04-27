@@ -4,18 +4,24 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.netflix.hystrix.strategy.HystrixPlugins;
+
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import static java.util.Arrays.stream;
 
 public class SpinnakerBundle {
-	 @SuppressWarnings("unchecked")
-	 private static final Map<String, Object> ROSCO_PROPS = (Map<String, Object>) (Object)
-	 		com.netflix.spinnaker.rosco.Main.getDEFAULT_PROPS();
+	@SuppressWarnings("unchecked")
+	private static final Map<String, Object> ROSCO_PROPS = (Map<String, Object>) (Object)
+			com.netflix.spinnaker.rosco.Main.getDEFAULT_PROPS();
 
 	@SuppressWarnings("unchecked")
 	private static final Map<String, Object> FRONT50_PROPS = (Map<String, Object>) (Object)
 			com.netflix.spinnaker.front50.Main.getDEFAULT_PROPS();
+
+	@SuppressWarnings("unchecked")
+	private static final Map<String, Object> GATE_PROPS = (Map<String, Object>) (Object)
+			com.netflix.spinnaker.gate.Main.getDEFAULT_PROPS();
 
 	public static void main(String[] args) {
 		String config = "./conf/";
@@ -24,15 +30,26 @@ public class SpinnakerBundle {
 
 		ROSCO_PROPS.put("spring.config.location", config);
 		FRONT50_PROPS.put("spring.config.location", config);
+		GATE_PROPS.put("spring.config.location", config);
 
-		 new SpringApplicationBuilder()
-		 		.properties(ROSCO_PROPS)
-		 		.sources(com.netflix.spinnaker.rosco.Main.class)
-		 		.run(args);
+		new SpringApplicationBuilder()
+				.properties(ROSCO_PROPS)
+				.sources(com.netflix.spinnaker.rosco.Main.class)
+				.run(args);
+
+		// otherwise, HystrixPlugins.getInstance().registerMetricsPublisher(..) will fail
+		HystrixPlugins.reset();
 
 		new SpringApplicationBuilder()
 				.properties(FRONT50_PROPS)
 				.sources(com.netflix.spinnaker.front50.Main.class)
+				.run(args);
+
+		HystrixPlugins.reset();
+
+		new SpringApplicationBuilder()
+				.properties(GATE_PROPS)
+				.sources(com.netflix.spinnaker.gate.Main.class)
 				.run(args);
 	}
 

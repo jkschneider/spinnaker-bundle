@@ -7,7 +7,7 @@ rootProject.name = 'spinnaker-bundle'
 gradle.ext.spinnakerProjects = [
 	'rosco',
 	'front50',
-//	'gate',
+	'gate',
 //	'echo',
 //	'igor',
 //	'clouddriver',

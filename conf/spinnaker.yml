@@ -25,3 +25,6 @@ endpoints:
   trace.enabled: false
 
 spring.jmx.enabled: false
+
+# only used by gate, but causes the other services to fail if this isn't defined
+spring.session.store-type: redis
