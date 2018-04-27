@@ -43,20 +43,20 @@ repositories {
 
 dependencies {
 	compile 'org.apache.thrift:libthrift:0.9.1'
+	compile 'com.netflix.hystrix:hystrix-javanica:1.4.21'
 
 	gradle.ext.spinnakerProjects.each { project ->
-		compile("com.netflix.spinnaker.$project:$project-web:latest.release") {
-			//exclude group: 'org.springframework.boot', module: 'spring-boot-starter-actuator'
-		}
+		compile("com.netflix.spinnaker.$project:$project-web:latest.release")
 	}
 }
 
 configurations.all {
 	exclude group: 'org.mortbay.jetty', module: 'servlet-api'
 	exclude group: 'javax.servlet', module: 'servlet-api'
+	exclude group: 'com.netflix.spinnaker.kork', module: 'kork-hystrix'
 
 	resolutionStrategy {
-		force 'com.google.guava:guava:15.0'
+		force 'com.google.guava:guava:16.0.1'
 		eachDependency {
 			if (it.requested.group == "asm" || it.requested.group == "org.ow2.asm") {
 				it.useTarget group: "org.ow2.asm", name: "asm-all", version: "5.0.4"
@@ -79,13 +79,5 @@ task printClasspath {
 				.sort()
 				.unique()
 				.each { println(it) }
-	}
-}
-
-task printProjects {
-	doLast {
-		gradle.includedBuilds.each {
-			println(it)
-		}
 	}
 }

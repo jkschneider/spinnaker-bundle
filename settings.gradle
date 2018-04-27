@@ -1,13 +1,17 @@
 rootProject.name = 'spinnaker-bundle'
 
+/**
+ * fiat isn't necessary for local dev as each service reacts to the presence of
+ * `services.fiat.enabled` and allow anon access if it is `false`
+ */
 gradle.ext.spinnakerProjects = [
-//	'rosco',
+	'rosco',
 	'front50',
-//	'fiat',
-//	'clouddriver',
 //	'gate',
 //	'echo',
-//	'igor'
+//	'igor',
+//	'clouddriver',
+//	'fiat'
 ]
 
 gradle.ext.spinnakerProjects.each {

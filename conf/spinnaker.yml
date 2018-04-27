@@ -1,0 +1,27 @@
+# Config options that apply to all microservices
+
+management.security.enabled: false
+
+# this appears to be a duplicate of spinnaker.cassandra.enabled, but they are used
+# in different places. perhaps one is older than another?
+cassandra.enabled: false
+
+spinnaker:
+  cassandra.enabled: false
+  redis.enabled: true
+
+endpoints:
+  health.enabled: true
+
+  autoconfig.enabled: false
+  beans.enabled: false
+  configprops.enabled: false
+  dump.enabled: false
+  env.enabled: false
+  info.enabled: false
+  metrics.enabled: false
+  mappings.enabled: false
+  shutdown.enabled: false
+  trace.enabled: false
+
+spring.jmx.enabled: false
