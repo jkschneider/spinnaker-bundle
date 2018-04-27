@@ -1,3 +1,13 @@
 rootProject.name = 'spinnaker-bundle'
 
-includeBuild '../rosco/'
+gradle.ext.spinnakerProjects = [
+	'rosco',
+	'front50',
+	'fiat',
+//	'clouddriver',
+	'gate',
+	'echo',
+	'igor'
+]
+
+gradle.ext.spinnakerProjects.each { includeBuild "../$it" }
