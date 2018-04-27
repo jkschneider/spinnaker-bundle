@@ -1,6 +1,28 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.7.RELEASE'
+	}
+	repositories {
+		jcenter()
+		maven { url "http://dl.bintray.com/spinnaker/gradle" }
+		maven { url "https://plugins.gradle.org/m2/" }
+	}
+	dependencies {
+		classpath 'com.netflix.spinnaker.gradle:spinnaker-gradle-project:4.0.0'
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE"
+	}
+}
+
 plugins {
 	id 'java'
 	id 'application'
+}
+
+apply plugin: 'spinnaker.project'
+apply plugin: 'org.springframework.boot'
+
+spinnaker {
+	dependenciesVersion = project.findProperty('spinnakerDependenciesVersion') ?: '0.125.0'
 }
 
 group = 'io.pivotal.spinnaker'
@@ -20,9 +42,50 @@ repositories {
 }
 
 dependencies {
+	compile 'org.apache.thrift:libthrift:0.9.1'
+
 	gradle.ext.spinnakerProjects.each { project ->
 		compile("com.netflix.spinnaker.$project:$project-web:latest.release") {
-			exclude group: 'org.springframework.boot', module: 'spring-boot-starter-actuator'
+			//exclude group: 'org.springframework.boot', module: 'spring-boot-starter-actuator'
+		}
+	}
+}
+
+configurations.all {
+	exclude group: 'org.mortbay.jetty', module: 'servlet-api'
+	exclude group: 'javax.servlet', module: 'servlet-api'
+
+	resolutionStrategy {
+		force 'com.google.guava:guava:15.0'
+		eachDependency {
+			if (it.requested.group == "asm" || it.requested.group == "org.ow2.asm") {
+				it.useTarget group: "org.ow2.asm", name: "asm-all", version: "5.0.4"
+			}
+			if (it.requested.group == "cglib" || it.requested.name == "cglib") {
+				it.useTarget group: "cglib", name: "cglib", version: "3.1"
+			}
+			if (it.requested.group == "org.apache.xbean") {
+				it.useVersion "4.4"
+			}
+		}
+	}
+}
+
+task printClasspath {
+	doLast {
+		configurations.runtime.resolvedConfiguration.files
+				.findAll { it.name.endsWith('.jar') }
+				.collect { it.name.substring(0, it.name.length() - 4) }
+				.sort()
+				.unique()
+				.each { println(it) }
+	}
+}
+
+task printProjects {
+	doLast {
+		gradle.includedBuilds.each {
+			println(it)
 		}
 	}
 }

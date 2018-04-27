@@ -148,7 +148,7 @@ services:
     # You need to provide the fully-qualified path to the directory containing
     # the packer templates.
     # They typically live in rosco's config/packer directory.
-    configDir: /opt/rosco/config/packer
+    #configDir: /opt/rosco/config/packer
 
   bakery:
     host: ${services.rosco.host}
